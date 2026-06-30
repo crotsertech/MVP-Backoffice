@@ -1,8 +1,7 @@
 # MVP Backoffice
 
-Field service management for a small water-treatment shop. Three PWAs (admin,
-technician, customer) on top of a vanilla PHP/MySQL backend. No frameworks,
-no build step, no package manager.
+Field service management and CRM designed for water-treatment businesses. Three PWAs (admin,
+technician, customer) on top of a vanilla PHP/MySQL backend. 
 
 Released under MIT with the Commons Clause restriction. You can read, fork,
 modify, self-host, and contribute. You cannot sell it. See `LICENSE`.
@@ -120,3 +119,4 @@ in that path or set the invoice header to text-only by editing
 - No CI config.
 - No Docker setup. It's plain PHP; drop it on any LAMP host.
 - No Composer dependencies.
+- No financial tools, built in interconnect for Quickbooks Online to handle this.
