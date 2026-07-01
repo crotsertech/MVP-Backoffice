@@ -114,6 +114,8 @@ CREATE TABLE `customer_notes` (
   `author_role_context` varchar(20) DEFAULT NULL,
   `note_text` text NOT NULL,
   `is_visible_to_customer` tinyint(1) NOT NULL DEFAULT 0,
+  `is_pinned` tinyint(1) NOT NULL DEFAULT 0,
+  `pinned_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
