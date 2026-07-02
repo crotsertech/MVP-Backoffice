@@ -252,6 +252,15 @@ CREATE TABLE `on_my_way_log` (
   `sent_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `pending_notifications` (
+  `id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `body` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `read_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 CREATE TABLE `parts_catalog` (
   `part_id` int(11) NOT NULL,
   `category_id` int(11) NOT NULL,
@@ -622,6 +631,11 @@ ALTER TABLE `push_subscriptions`
   ADD UNIQUE KEY `uniq_endpoint` (`endpoint`),
   ADD KEY `idx_customer` (`customer_id`);
 
+ALTER TABLE `pending_notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `customer_id` (`customer_id`),
+  ADD KEY `idx_unread` (`customer_id`, `read_at`);
+
 ALTER TABLE `qbo_customers`
   ADD PRIMARY KEY (`customer_id`);
 
@@ -726,6 +740,9 @@ ALTER TABLE `notification_logs`
 ALTER TABLE `on_my_way_log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
+ALTER TABLE `pending_notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 ALTER TABLE `parts_catalog`
   MODIFY `part_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
@@ -819,6 +836,9 @@ ALTER TABLE `invoice_lines`
 ALTER TABLE `on_my_way_log`
   ADD CONSTRAINT `on_my_way_log_ibfk_1` FOREIGN KEY (`appointment_id`) REFERENCES `appointments` (`appointment_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `on_my_way_log_ibfk_2` FOREIGN KEY (`technician_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+ALTER TABLE `pending_notifications`
+  ADD CONSTRAINT `pending_notifications_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`) ON DELETE CASCADE;
 
 ALTER TABLE `parts_catalog`
   ADD CONSTRAINT `parts_catalog_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `part_categories` (`category_id`);
