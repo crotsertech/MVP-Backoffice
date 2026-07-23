@@ -380,12 +380,14 @@ function syncInvoiceToQbo(PDO $db, array $cfg, int $invoiceId): array {
         if (!empty($line['description']) && $line['description'] !== $line['line_name']) {
             $qboDesc .= ' - ' . $line['description'];
         }
+        $taxCodeRef = !empty($line['is_taxable']) ? ['value' => 'TAX'] : ['value' => 'NON'];
         if ($defaultItemId) {
             $lineItems[] = [
                 'Id'          => (string)$sortOrder++,
                 'DetailType'  => 'SalesItemLineDetail',
                 'Amount'      => $amt,
                 'Description' => $qboDesc,
+                'TaxCodeRef'  => $taxCodeRef,
                 'SalesItemLineDetail' => [
                     'ItemRef'  => ['value' => $defaultItemId],
                     'Qty'      => (float)$line['quantity'],
@@ -398,11 +400,12 @@ function syncInvoiceToQbo(PDO $db, array $cfg, int $invoiceId): array {
                 'DetailType'  => 'DescriptionOnly',
                 'Amount'      => $amt,
                 'Description' => $qboDesc,
+                'TaxCodeRef'  => $taxCodeRef,
             ];
         }
     }
 
- // Card fee line
+ // Card fee line (always taxable)
     if ((float)($inv['card_fee_amount'] ?? 0) > 0) {
         $amt = (float)$inv['card_fee_amount'];
         if ($defaultItemId) {
@@ -411,6 +414,7 @@ function syncInvoiceToQbo(PDO $db, array $cfg, int $invoiceId): array {
                 'DetailType'  => 'SalesItemLineDetail',
                 'Amount'      => $amt,
                 'Description' => 'Credit/Debit Service Fee (3.5%)',
+                'TaxCodeRef'  => ['value' => 'TAX'],
                 'SalesItemLineDetail' => [
                     'ItemRef'  => ['value' => $defaultItemId],
                     'Qty'      => 1,
@@ -423,6 +427,7 @@ function syncInvoiceToQbo(PDO $db, array $cfg, int $invoiceId): array {
                 'DetailType'  => 'DescriptionOnly',
                 'Amount'      => $amt,
                 'Description' => 'Credit/Debit Service Fee (3.5%)',
+                'TaxCodeRef'  => ['value' => 'TAX'],
             ];
         }
     }
@@ -689,12 +694,14 @@ function forceResyncInvoiceToQbo(PDO $db, array $cfg, int $invoiceId): array {
         if (!empty($line['description']) && $line['description'] !== $line['line_name']) {
             $qboDesc .= ' - ' . $line['description'];
         }
+        $taxCodeRef = !empty($line['is_taxable']) ? ['value' => 'TAX'] : ['value' => 'NON'];
         if ($defaultItemId) {
             $lineItems[] = [
                 'Id'          => (string)$sortOrder++,
                 'DetailType'  => 'SalesItemLineDetail',
                 'Amount'      => $amt,
                 'Description' => $qboDesc,
+                'TaxCodeRef'  => $taxCodeRef,
                 'SalesItemLineDetail' => [
                     'ItemRef'  => ['value' => $defaultItemId],
                     'Qty'      => (float)$line['quantity'],
@@ -707,6 +714,7 @@ function forceResyncInvoiceToQbo(PDO $db, array $cfg, int $invoiceId): array {
                 'DetailType'  => 'DescriptionOnly',
                 'Amount'      => $amt,
                 'Description' => $qboDesc,
+                'TaxCodeRef'  => $taxCodeRef,
             ];
         }
     }
@@ -718,6 +726,7 @@ function forceResyncInvoiceToQbo(PDO $db, array $cfg, int $invoiceId): array {
                 'DetailType'  => 'SalesItemLineDetail',
                 'Amount'      => $amt,
                 'Description' => 'Credit/Debit Service Fee (3.5%)',
+                'TaxCodeRef'  => ['value' => 'TAX'],
                 'SalesItemLineDetail' => [
                     'ItemRef'  => ['value' => $defaultItemId],
                     'Qty'      => 1,
@@ -730,6 +739,7 @@ function forceResyncInvoiceToQbo(PDO $db, array $cfg, int $invoiceId): array {
                 'DetailType'  => 'DescriptionOnly',
                 'Amount'      => $amt,
                 'Description' => 'Credit/Debit Service Fee (3.5%)',
+                'TaxCodeRef'  => ['value' => 'TAX'],
             ];
         }
     }

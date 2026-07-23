@@ -20,6 +20,12 @@
     font-weight: normal;
     font-style: normal;
   }
+  @font-face {
+    font-family: 'Eurostile';
+    src: url('eurostile.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
 
   :root {
  /* Palette: Space-blue chrome meets Aqua */
@@ -186,8 +192,9 @@
     letter-spacing: 0.02em;
     text-shadow: 0 0 24px rgba(42,143,255,0.6), 0 1px 0 rgba(0,0,0,0.3);
     margin-right: 28px;
+    flex-shrink: 0;
   }
-  .topbar-nav { display: flex; gap: 0; flex: 1; align-items: center; }
+  .topbar-nav { display: flex; gap: 0; flex: 1; align-items: center; min-width: 0; }
  /* Nav group separator */
   .nav-sep {
     width: 1px;
@@ -202,7 +209,7 @@
     background: none;
     border: none;
     color: rgba(160,200,255,0.55);
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Eurostile', sans-serif;
     font-size: 13px;
     font-weight: 500;
     padding: 7px 14px;
@@ -220,6 +227,53 @@
     background: rgba(42,143,255,0.18);
     box-shadow: inset 0 0 0 1px rgba(42,143,255,0.25);
   }
+  .nav-dropdown {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .nav-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: rgba(18,28,48,0.95);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid rgba(100,160,240,0.22);
+    border-radius: 8px;
+    min-width: 180px;
+    z-index: 200;
+    box-shadow: 0 12px 40px rgba(0,5,25,0.6);
+    padding: 6px 0;
+  }
+  .nav-dropdown:hover .nav-dropdown-content {
+    display: block;
+  }
+  .nav-dropdown-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    color: rgba(160,200,255,0.75);
+    font-family: 'Eurostile', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 16px;
+    cursor: pointer;
+    letter-spacing: 0.2px;
+    transition: color 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+  .nav-dropdown-btn:hover {
+    color: #fff;
+    background: rgba(42,143,255,0.15);
+  }
+  .nav-dropdown-btn.active {
+    color: #fff;
+    background: rgba(42,143,255,0.2);
+  }
   .topbar-logout {
     background: rgba(200,30,30,0.85);
     border: 1px solid rgba(255,80,80,0.4);
@@ -231,6 +285,8 @@
     transition: all 0.18s;
     border-radius: 7px;
     font-weight: 600;
+    flex-shrink: 0;
+    white-space: nowrap;
   }
   .topbar-logout:hover {
     background: rgba(220,40,40,0.95);
@@ -1073,6 +1129,10 @@
   html[data-theme="snep"][data-mode="light"] .nav-btn { color: rgba(20,50,100,0.55); }
   html[data-theme="snep"][data-mode="light"] .nav-btn:hover { color: #0f1e30; background: rgba(40,100,220,0.1); }
   html[data-theme="snep"][data-mode="light"] .nav-btn.active { color: #0a1830; background: rgba(26,114,232,0.15); box-shadow: inset 0 0 0 1px rgba(26,114,232,0.25); }
+  html[data-theme="snep"][data-mode="light"] .nav-dropdown-content { background: rgba(220,235,255,0.95); border-color: rgba(80,140,220,0.25); }
+  html[data-theme="snep"][data-mode="light"] .nav-dropdown-btn { color: rgba(20,50,100,0.75); }
+  html[data-theme="snep"][data-mode="light"] .nav-dropdown-btn:hover { color: #0f1e30; background: rgba(40,100,220,0.1); }
+  html[data-theme="snep"][data-mode="light"] .nav-dropdown-btn.active { color: #0a1830; background: rgba(26,114,232,0.15); }
   html[data-theme="snep"][data-mode="light"] .login-box { background: rgba(220,235,255,0.28); border-color: rgba(100,160,240,0.35); backdrop-filter: blur(36px) saturate(1.8) brightness(1.12); -webkit-backdrop-filter: blur(36px) saturate(1.8) brightness(1.12); box-shadow: 0 12px 64px rgba(10,40,120,0.35), inset 0 1px 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(20,60,140,0.1); }
   html[data-theme="snep"][data-mode="light"] .login-logo { color: #fff; }
   html[data-theme="snep"][data-mode="light"] .login-sub { color: rgba(200,225,255,0.65); }
@@ -1128,6 +1188,10 @@
   html[data-theme="metro"] .nav-btn { color: rgba(255,255,255,0.7); border-radius: 0; }
   html[data-theme="metro"] .nav-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
   html[data-theme="metro"] .nav-btn.active { color: #fff; background: rgba(255,255,255,0.22); box-shadow: inset 0 -3px 0 #fff; border-radius: 0; }
+  html[data-theme="metro"] .nav-dropdown-content { background: #0078d4; border: none; border-radius: 0; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+  html[data-theme="metro"] .nav-dropdown-btn { color: rgba(255,255,255,0.8); border-radius: 0; }
+  html[data-theme="metro"] .nav-dropdown-btn:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  html[data-theme="metro"] .nav-dropdown-btn.active { color: #fff; background: rgba(255,255,255,0.2); }
   html[data-theme="metro"] .nav-sep { background: rgba(255,255,255,0.2); }
   html[data-theme="metro"] .card,
   html[data-theme="metro"] .stat-card,
@@ -1248,7 +1312,7 @@
   html[data-theme="metro"][data-mode="light"] .modal-close { background: #f0f1f3; border-color: rgba(0,0,0,0.1); }
 
  /* THEME TOGGLE UI */
-  .theme-controls { display: flex; align-items: center; gap: 6px; margin-right: 4px; }
+  .theme-controls { display: flex; align-items: center; gap: 6px; margin-right: 4px; flex-shrink: 0; }
   .theme-btn {
     background: rgba(255,255,255,0.08);
     border: 1px solid rgba(255,255,255,0.15);
@@ -1449,27 +1513,26 @@
   <div class="topbar">
     <div class="topbar-brand">MVP Backoffice</div>
     <div class="topbar-nav">
-      <div class="nav-group">
-        <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
-        <button class="nav-btn" onclick="showPage('appointments')">Appointments <span id="pending-badge" style="display:none;background:var(--warn);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px"></span></button>
-        <button class="nav-btn" onclick="showPage('customers')">Customers</button>
-        <button class="nav-btn" onclick="showPage('invoices')">Invoices</button>
-        <button class="nav-btn" onclick="showPage('estimates')">Estimates</button>
-        <button class="nav-btn" onclick="showPage('contracts')">Contracts</button>
-        <button class="nav-btn" onclick="showPage('iot')">IoT Sensors</button>
+      <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
+      <div class="nav-dropdown">
+        <button class="nav-btn" onclick="showPage('appointments')">Jobs ▾</button>
+        <div class="nav-dropdown-content">
+          <button class="nav-dropdown-btn" onclick="showPage('appointments')">Appointments <span id="pending-badge" style="display:none;background:var(--warn);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px"></span></button>
+          <button class="nav-dropdown-btn" onclick="showPage('estimates')">Estimates</button>
+          <button class="nav-dropdown-btn" onclick="showPage('invoices')">Invoices</button>
+          <button class="nav-dropdown-btn" onclick="showPage('weekly-report')">Weekly Report</button>
+        </div>
       </div>
-      <div class="nav-sep"></div>
-      <div class="nav-group">
-        <button class="nav-btn" onclick="showPage('tech-history')">Tech History</button>
-        <button class="nav-btn" onclick="showPage('time-tracking')">Time Tracking</button>
-        <button class="nav-btn" onclick="showPage('service-report')">Service Report</button>
-        <button class="nav-btn" onclick="showPage('weekly-report')">Weekly Report</button>
+      <div class="nav-dropdown">
+        <button class="nav-btn" onclick="showPage('customers')">Customers ▾</button>
+        <div class="nav-dropdown-content">
+          <button class="nav-dropdown-btn" onclick="showPage('customers')">Customer List</button>
+          <button class="nav-dropdown-btn" onclick="showPage('contracts')">Contracts</button>
+        </div>
       </div>
-      <div class="nav-sep"></div>
-      <div class="nav-group">
-        <button class="nav-btn" onclick="showPage('pricelist')">Price List</button>
-        <button class="nav-btn" onclick="showPage('settings')">Settings</button>
-      </div>
+      <button class="nav-btn" onclick="showPage('time-tracking')">Timecards</button>
+      <button class="nav-btn" onclick="showPage('pricelist')">Price List</button>
+      <button class="nav-btn" onclick="showPage('settings')">Settings</button>
     </div>
     <button class="topbar-logout" onclick="doLogout()">Sign Out</button>
     <div class="theme-controls">
@@ -1517,7 +1580,7 @@
       <span class="item-icon"></span>Tech History
     </button>
     <button class="more-drawer-item" onclick="showPage('time-tracking');toggleMoreDrawer()">
-      <span class="item-icon">⏱️</span>Time Tracking
+      <span class="item-icon">⏱️</span>Timecards
     </button>
     <button class="more-drawer-item" onclick="showPage('service-report');toggleMoreDrawer()">
       <span class="item-icon"></span>Service Report
@@ -4055,6 +4118,7 @@ let _suppressHistoryPush = false;
 function _applyPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.nav-dropdown-btn').forEach(b => b.classList.remove('active'));
   const _navMap = {
     'customer-detail': 'customers',
     'due':             'service',
@@ -4066,6 +4130,16 @@ function _applyPage(name) {
   document.querySelectorAll('.nav-btn').forEach(b => {
     if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${navKey}'`)) {
       b.classList.add('active');
+    }
+  });
+  document.querySelectorAll('.nav-dropdown-btn').forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${navKey}'`)) {
+      b.classList.add('active');
+      const parent = b.closest('.nav-dropdown');
+      if (parent) {
+        const parentBtn = parent.querySelector('.nav-btn');
+        if (parentBtn) parentBtn.classList.add('active');
+      }
     }
   });
   document.querySelectorAll('.mobile-nav-btn').forEach(b => b.classList.remove('active'));
@@ -10534,6 +10608,7 @@ async function downloadWeeklyReportPdf() {
 </div>
 
 <div style="text-align:center;padding:10px 0 14px;font-family:'Prisma','DM Serif Display',serif;font-size:11px;color:rgba(0,0,0,0.28);letter-spacing:0.04em;user-select:none;" id="app-version-footer"></div>
+<div class="modal-overlay" id="modal-theme-picker" style="z-index:500">
   <div class="modal" style="max-width:460px">
     <div class="modal-header">
       <div class="modal-title"> Welcome to MVP Backoffice</div>
