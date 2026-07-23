@@ -1454,6 +1454,9 @@
         <button class="nav-btn" onclick="showPage('appointments')">Appointments <span id="pending-badge" style="display:none;background:var(--warn);color:#fff;border-radius:10px;padding:1px 7px;font-size:11px;margin-left:4px"></span></button>
         <button class="nav-btn" onclick="showPage('customers')">Customers</button>
         <button class="nav-btn" onclick="showPage('invoices')">Invoices</button>
+        <button class="nav-btn" onclick="showPage('estimates')">Estimates</button>
+        <button class="nav-btn" onclick="showPage('contracts')">Contracts</button>
+        <button class="nav-btn" onclick="showPage('iot')">IoT Sensors</button>
       </div>
       <div class="nav-sep"></div>
       <div class="nav-group">
@@ -1498,6 +1501,17 @@
 
   <!-- More drawer -->
   <div class="mobile-more-drawer" id="mobile-more-drawer">
+    <div class="more-drawer-label">Sales</div>
+    <button class="more-drawer-item" onclick="showPage('estimates');toggleMoreDrawer()">
+      <span class="item-icon"></span>Estimates
+    </button>
+    <button class="more-drawer-item" onclick="showPage('contracts');toggleMoreDrawer()">
+      <span class="item-icon"></span>Contracts
+    </button>
+    <button class="more-drawer-item" onclick="showPage('iot');toggleMoreDrawer()">
+      <span class="item-icon"></span>IoT Sensors
+    </button>
+    <div class="more-drawer-separator"></div>
     <div class="more-drawer-label">Reports</div>
     <button class="more-drawer-item" onclick="showPage('tech-history');toggleMoreDrawer()">
       <span class="item-icon"></span>Tech History
@@ -1867,6 +1881,7 @@
         <div style="display:flex;gap:10px">
           <button class="btn btn-ghost" onclick="openEditCustomer()">Edit</button>
           <button class="btn btn-ghost" onclick="openResetPassword()">Reset Password</button>
+          <button class="btn btn-ghost" onclick="openSendNotification()"> Send Test</button>
           <button class="btn btn-teal" onclick="openAddEquipment()">+ Add Equipment</button>
           <button class="btn btn-danger" onclick="confirmDeleteCustomer()">Remove Customer</button>
         </div>
@@ -2051,6 +2066,174 @@
             <span id="inv-panel-badge" class="badge"></span>
           </div>
           <div style="padding:20px 24px 24px" id="inv-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTIMATES -->
+    <div class="page" id="page-estimates">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Estimates & Quotes</div>
+          <div class="page-sub" id="est-summary-bar">Customer estimates and quotes</div>
+        </div>
+        <button class="btn btn-blue" onclick="openCreateEstimate()">+ New Estimate</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <select id="est-filter-status" onchange="loadEstimates()" style="width:auto;padding:6px 12px">
+          <option value="">All Statuses</option>
+          <option value="draft">Draft</option>
+          <option value="sent">Sent</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+          <option value="expired">Expired</option>
+          <option value="converted">Converted</option>
+        </select>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Estimate #</th><th>Customer</th><th>Date</th><th>Expiry</th><th>Total</th><th>Status</th><th></th>
+            </tr></thead>
+            <tbody id="estimates-body"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Estimate detail panel -->
+      <div id="est-detail-panel" style="display:none;margin-top:12px">
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:14px 20px;border-bottom:1px solid var(--mist);display:flex;align-items:center;gap:12px">
+            <button class="btn btn-ghost btn-sm" onclick="closeEstDetailPanel()"> Close</button>
+            <span id="est-panel-number" style="font-weight:700;font-size:16px"></span>
+            <span id="est-panel-badge" class="badge"></span>
+          </div>
+          <div style="padding:20px 24px 24px" id="est-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SERVICE CONTRACTS -->
+    <div class="page" id="page-contracts">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Service Contracts</div>
+          <div class="page-sub" id="contract-summary-bar">Recurring service agreements</div>
+        </div>
+        <button class="btn btn-blue" onclick="openCreateContract()">+ New Contract</button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <select id="contract-filter-status" onchange="loadContracts()" style="width:auto;padding:6px 12px">
+          <option value="">All Statuses</option>
+          <option value="draft">Draft</option>
+          <option value="active">Active</option>
+          <option value="expired">Expired</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="loadExpiringContracts()"> Expiring Soon</button>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Contract #</th><th>Name</th><th>Customer</th><th>Status</th><th>Start Date</th><th>End Date</th><th>Price</th><th></th>
+            </tr></thead>
+            <tbody id="contracts-body"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Contract detail panel -->
+      <div id="contract-detail-panel" style="display:none;margin-top:12px">
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:14px 20px;border-bottom:1px solid var(--mist);display:flex;align-items:center;gap:12px">
+            <button class="btn btn-ghost btn-sm" onclick="closeContractDetailPanel()"> Close</button>
+            <span id="contract-panel-number" style="font-weight:700;font-size:16px"></span>
+            <span id="contract-panel-badge" class="badge"></span>
+          </div>
+          <div style="padding:20px 24px 24px" id="contract-panel-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IOT SENSORS -->
+    <div class="page" id="page-iot">
+      <div class="page-header">
+        <div>
+          <div class="page-title">IoT Sensors</div>
+          <div class="page-sub" id="iot-summary-bar">Connected sensor devices</div>
+        </div>
+        <button class="btn btn-blue" onclick="openProvisionDevice()">+ Provision Device</button>
+      </div>
+
+      <!-- Dashboard stats -->
+      <div id="iot-dashboard-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px">
+        <div class="stat-card" style="border-left:3px solid #10b981">
+          <div class="stat-label">Active</div>
+          <div class="stat-value" id="iot-stat-active">—</div>
+        </div>
+        <div class="stat-card" style="border-left:3px:var(--warn)">
+          <div class="stat-label">Offline</div>
+          <div class="stat-value" id="iot-stat-offline">—</div>
+        </div>
+        <div class="stat-card" style="border-left:3px solid #ef4444">
+          <div class="stat-label">Open Alerts</div>
+          <div class="stat-value" id="iot-stat-alerts">—</div>
+        </div>
+        <div class="stat-card" style="border-left:3px solid var(--water)">
+          <div class="stat-label">Total Devices</div>
+          <div class="stat-value" id="iot-stat-total">—</div>
+        </div>
+      </div>
+
+      <!-- Open alerts panel -->
+      <div id="iot-alerts-panel" style="display:none;margin-bottom:20px">
+        <div class="section-label" style="color:#ef4444;margin-bottom:8px"> Open Alerts</div>
+        <div class="card" style="padding:0;overflow:hidden" id="iot-alerts-list"></div>
+      </div>
+
+      <!-- Offline devices panel -->
+      <div id="iot-offline-panel" style="display:none;margin-bottom:20px">
+        <div class="section-label" style="color:var(--warn);margin-bottom:8px"> Offline Devices (24h+)</div>
+        <div class="card" style="padding:0;overflow:hidden" id="iot-offline-list"></div>
+      </div>
+
+      <!-- Filters -->
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+        <select id="iot-filter-status" onchange="loadIotDevices()" style="width:auto;padding:6px 12px">
+          <option value="">All Statuses</option>
+          <option value="active">Active</option>
+          <option value="offline">Offline</option>
+          <option value="error">Error</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <select id="iot-filter-type" onchange="loadIotDevices()" style="width:auto;padding:6px 12px">
+          <option value="">All Types</option>
+        </select>
+      </div>
+
+      <!-- Device list -->
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th>Device</th><th>Type</th><th>Customer</th><th>Status</th><th>Last Seen</th><th>Last Readings</th><th></th>
+            </tr></thead>
+            <tbody id="iot-devices-body"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Device detail panel -->
+      <div id="iot-detail-panel" style="display:none;margin-top:12px">
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:14px 20px;border-bottom:1px solid var(--mist);display:flex;align-items:center;gap:12px">
+            <button class="btn btn-ghost btn-sm" onclick="closeIotDetailPanel()"> Close</button>
+            <span id="iot-panel-name" style="font-weight:700;font-size:16px"></span>
+            <span id="iot-panel-badge" class="badge"></span>
+          </div>
+          <div style="padding:20px 24px 24px" id="iot-panel-body"></div>
         </div>
       </div>
     </div>
@@ -3558,7 +3741,7 @@
 </div>
 
 <script>
-const MVP_VERSION = 'v260630';
+const MVP_VERSION = 'v260723';
 let API_URL = 'https://example.com/api/public';
 let accessToken = null;
 
@@ -3899,6 +4082,9 @@ function _applyPage(name) {
   if (name === 'appointments')   loadAppointments();
   if (name === 'customers')      loadCustomers();
   if (name === 'invoices')       { if (!document.getElementById('inv-filter-month').value) invInitMonth(); else loadInvoices(); }
+  if (name === 'estimates')      loadEstimates();
+  if (name === 'contracts')      loadContracts();
+  if (name === 'iot')            loadIotDevices();
   if (name === 'taxrates')       loadTaxRates();
   if (name === 'staff')          loadStaff();
   if (name === 'due')            loadDue(30);
@@ -5937,6 +6123,35 @@ async function saveResetPassword() {
   } catch(e) { toast(e.message, 'error'); }
 }
 
+function openSendNotification() {
+  const name = document.getElementById('detail-name').textContent;
+  document.getElementById('notif-customer-name').textContent = name;
+  document.getElementById('notif-title').value = '';
+  document.getElementById('notif-body').value  = '';
+  openModal('modal-send-notification');
+}
+
+async function sendTestNotification() {
+  const title = document.getElementById('notif-title').value.trim();
+  const body  = document.getElementById('notif-body').value.trim();
+
+  if (!title || !body) return toast('Title and body are required', 'error');
+
+  try {
+    const r = await api('POST', '/admin/push/send', {
+      customer_id: currentCustomerId,
+      title,
+      body,
+    });
+    const parts = [];
+    if (r.push_attempted > 0) parts.push(`${r.push_success} web push sent, ${r.push_failures} failed`);
+    if (r.push_subscriptions_pruned > 0) parts.push(`${r.push_subscriptions_pruned} stale subscriptions cleaned`);
+    if (parts.length === 0) parts.push('queued for next app poll');
+    toast(`Notification sent to ${title} — ${parts.join('; ')}`, 'success');
+    closeModal('modal-send-notification');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
 async function openEditEquipment(equipId) {
   currentEquipmentId = equipId;
   document.getElementById('ee-type').innerHTML = equipmentTypes.map(t =>
@@ -7255,6 +7470,18 @@ async function submitCreateInvoice() {
 document.addEventListener('click', e => {
   if (!e.target.closest('#inv-customer-search') && !e.target.closest('#inv-customer-results')) {
     const r = document.getElementById('inv-customer-results');
+    if (r) r.style.display = 'none';
+  }
+  if (!e.target.closest('#est-customer-search') && !e.target.closest('#est-customer-results')) {
+    const r = document.getElementById('est-customer-results');
+    if (r) r.style.display = 'none';
+  }
+  if (!e.target.closest('#contract-customer-search') && !e.target.closest('#contract-customer-results')) {
+    const r = document.getElementById('contract-customer-results');
+    if (r) r.style.display = 'none';
+  }
+  if (!e.target.closest('#iot-customer-search') && !e.target.closest('#iot-customer-results')) {
+    const r = document.getElementById('iot-customer-results');
     if (r) r.style.display = 'none';
   }
 });
@@ -9916,6 +10143,31 @@ async function downloadWeeklyReportPdf() {
   </div>
 </div>
 
+<!-- Send Test Notification -->
+<div class="modal-overlay" id="modal-send-notification">
+  <div class="modal" style="width:440px">
+    <div class="modal-header">
+      <div class="modal-title">Send Test Notification</div>
+      <button class="modal-close" onclick="closeModal('modal-send-notification')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--slate);font-size:13px;margin-bottom:20px">This will send a notification to <strong id="notif-customer-name"></strong>. It will appear as a pending notification in their app and attempt a live web push if they have subscriptions.</p>
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" id="notif-title" placeholder="e.g. System Test" maxlength="255">
+      </div>
+      <div class="form-group">
+        <label>Body *</label>
+        <textarea id="notif-body" placeholder="Notification message content" rows="3" maxlength="500"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('modal-send-notification')">Cancel</button>
+      <button type="button" class="btn btn-blue" onclick="sendTestNotification()">Send Notification</button>
+    </div>
+  </div>
+</div>
+
 <!-- Add / Edit Time Entry -->
 <div class="modal-overlay" id="modal-time-entry">
   <div class="modal" style="width:440px">
@@ -10049,11 +10301,239 @@ async function downloadWeeklyReportPdf() {
   </div>
 </div>
 
+<!-- Create/Edit Estimate Modal -->
+<div class="modal-overlay" id="modal-create-estimate">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-est-title">New Estimate</div>
+      <button class="modal-close" onclick="closeModal('modal-create-estimate')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Customer *</label>
+        <input type="text" id="est-customer-search" placeholder="Search customers…" oninput="searchEstCustomer()" autocomplete="off">
+        <div id="est-customer-results" style="display:none;position:relative;z-index:10;background:var(--card);border:1px solid var(--mist);border-radius:6px;margin-top:4px;max-height:200px;overflow-y:auto"></div>
+        <input type="hidden" id="est-customer-id">
+        <div id="est-customer-selected" style="display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--mist);border-radius:6px;margin-top:4px">
+          <span id="est-customer-selected-name" style="font-size:13px;font-weight:600;flex:1"></span>
+          <button class="btn btn-ghost btn-sm" onclick="clearEstCustomer()">×</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Expiry Date</label><input type="date" id="est-expiry-date"></div>
+        <div class="form-group"><label>Linked Appointment</label><select id="est-appointment-id"><option value="">None</option></select></div>
+      </div>
+      <div class="form-group"><label>Notes</label><textarea id="est-notes" rows="3"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('modal-create-estimate')">Cancel</button>
+      <button type="button" class="btn btn-blue" onclick="submitCreateEstimate()">Create Estimate</button>
+    </div>
+  </div>
+</div>
+
+<!-- Estimate Line Item Modal -->
+<div class="modal-overlay" id="modal-est-line">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-est-line-title">Add Line Item</div>
+      <button class="modal-close" onclick="closeModal('modal-est-line')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="est-line-id">
+      <div class="form-row">
+        <div class="form-group"><label>Line Type</label>
+          <select id="est-line-type">
+            <option value="labor">Labor</option><option value="service_call">Service Call</option>
+            <option value="parts">Parts</option><option value="filter">Filter</option>
+            <option value="equipment">Equipment</option><option value="salt">Salt</option>
+            <option value="warranty">Warranty</option><option value="discount">Discount</option>
+            <option value="custom" selected>Custom</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Quantity</label><input type="number" id="est-line-qty" value="1" step="0.01"></div>
+      </div>
+      <div class="form-group"><label>Line Name *</label><input type="text" id="est-line-name"></div>
+      <div class="form-group"><label>Description</label><input type="text" id="est-line-desc"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Unit Price</label><input type="number" id="est-line-price" value="0" step="0.01"></div>
+        <div class="form-group"><label><input type="checkbox" id="est-line-taxable"> Taxable</label></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('modal-est-line')">Cancel</button>
+      <button type="button" class="btn btn-blue" onclick="submitEstLine()">Save Line</button>
+    </div>
+  </div>
+</div>
+
+<!-- Create/Edit Contract Modal -->
+<div class="modal-overlay" id="modal-create-contract">
+  <div class="modal" style="max-width:700px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-contract-title">New Service Contract</div>
+      <button class="modal-close" onclick="closeModal('modal-create-contract')">×</button>
+    </div>
+    <div class="modal-body" style="flex:1;overflow-y:auto">
+      <input type="hidden" id="contract-edit-id">
+      <div class="form-group"><label>Customer *</label>
+        <input type="text" id="contract-customer-search" placeholder="Search customers…" oninput="searchContractCustomer()" autocomplete="off">
+        <div id="contract-customer-results" style="display:none;position:relative;z-index:10;background:var(--card);border:1px solid var(--mist);border-radius:6px;margin-top:4px;max-height:200px;overflow-y:auto"></div>
+        <input type="hidden" id="contract-customer-id">
+        <div id="contract-customer-selected" style="display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--mist);border-radius:6px;margin-top:4px">
+          <span id="contract-customer-selected-name" style="font-size:13px;font-weight:600;flex:1"></span>
+          <button class="btn btn-ghost btn-sm" onclick="clearContractCustomer()">×</button>
+        </div>
+      </div>
+      <div class="form-group"><label>Contract Name *</label><input type="text" id="contract-name" placeholder="e.g. Annual Water Softener Maintenance"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Start Date *</label><input type="date" id="contract-start-date"></div>
+        <div class="form-group"><label>End Date</label><input type="date" id="contract-end-date"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Frequency</label>
+          <select id="contract-frequency">
+            <option value="monthly">Monthly</option><option value="quarterly">Quarterly</option>
+            <option value="semi_annual">Semi-Annual</option><option value="annual" selected>Annual</option>
+            <option value="custom">Custom</option>
+          </select>
+        </div>
+        <div class="form-group" id="contract-custom-interval-group" style="display:none"><label>Custom Interval (days)</label><input type="number" id="contract-custom-interval" value="365"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Billing Cycle</label>
+          <select id="contract-billing-cycle">
+            <option value="monthly">Monthly</option><option value="quarterly">Quarterly</option>
+            <option value="semi_annual">Semi-Annual</option><option value="annual" selected>Annual</option>
+            <option value="per_visit">Per Visit</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Cycle Price</label><input type="number" id="contract-cycle-price" value="0" step="0.01"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label><input type="checkbox" id="contract-auto-renew"> Auto-renew</label></div>
+        <div class="form-group"><label>Renew Term (months)</label><input type="number" id="contract-renew-term" value="12"></div>
+      </div>
+      <div class="form-group"><label>Discount %</label><input type="number" id="contract-discount" value="0" step="0.01" placeholder="Optional discount on standard rates"></div>
+      <div class="form-group"><label>Notes</label><textarea id="contract-notes" rows="3"></textarea></div>
+    </div>
+    <div class="modal-footer" style="flex-shrink:0">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('modal-create-contract')">Cancel</button>
+      <button type="button" class="btn btn-blue" onclick="submitCreateContract()">Save Contract</button>
+    </div>
+  </div>
+</div>
+
 <div style="text-align:center;padding:10px 0 14px;font-family:'Prisma','DM Serif Display',serif;font-size:11px;color:rgba(0,0,0,0.28);letter-spacing:0.04em;user-select:none;" id="app-version-footer"></div>
 <script>document.getElementById('app-version-footer').textContent = 'MVP Backoffice ' + MVP_VERSION;</script>
 
 <!--  Theme Picker (first-run)  -->
-<div class="modal-overlay" id="modal-theme-picker" style="z-index:500">
+<!-- Provision IoT Device Modal -->
+<div class="modal-overlay" id="modal-provision-device">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-header">
+      <div class="modal-title">Provision IoT Device</div>
+      <button class="modal-close" onclick="closeModal('modal-provision-device')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Customer *</label>
+        <input type="text" id="iot-customer-search" placeholder="Search customers…" oninput="searchIotCustomer()" autocomplete="off">
+        <div id="iot-customer-results" style="display:none;position:relative;z-index:10;background:var(--card);border:1px solid var(--mist);border-radius:6px;margin-top:4px;max-height:200px;overflow-y:auto"></div>
+        <input type="hidden" id="iot-customer-id">
+        <div id="iot-customer-selected" style="display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--mist);border-radius:6px;margin-top:4px">
+          <span id="iot-customer-selected-name" style="font-size:13px;font-weight:600;flex:1"></span>
+          <button class="btn btn-ghost btn-sm" onclick="clearIotCustomer()">×</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Device Type *</label>
+          <select id="iot-device-type">
+            <option value="">Select type…</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Linked Equipment</label>
+          <select id="iot-equipment-id"><option value="">None</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Device Name</label><input type="text" id="iot-device-name" placeholder="e.g. Kitchen Softener Salt Monitor"></div>
+      <div class="form-group"><label>MAC Address</label><input type="text" id="iot-mac-address" placeholder="AA:BB:CC:DD:EE:FF"></div>
+      <div class="form-group"><label>Notes</label><textarea id="iot-device-notes" rows="2"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('modal-provision-device')">Cancel</button>
+      <button type="button" class="btn btn-blue" onclick="submitProvisionDevice()">Provision Device</button>
+    </div>
+  </div>
+</div>
+
+<!-- IoT Alert Rule Modal -->
+<div class="modal-overlay" id="modal-iot-alert-rule">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-iot-alert-title">Add Alert Rule</div>
+      <button class="modal-close" onclick="closeModal('modal-iot-alert-rule')">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="iot-alert-rule-id">
+      <div class="form-group"><label>Metric</label>
+        <select id="iot-alert-metric"></select>
+      </div>
+      <div class="form-group"><label>Rule Name</label><input type="text" id="iot-alert-rule-name" placeholder="e.g. Low Salt Warning"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Condition</label>
+          <select id="iot-alert-condition">
+            <option value="below">Below</option>
+            <option value="above">Above</option>
+            <option value="below_or_equals">Below or Equals</option>
+            <option value="above_or_equals">Above or Equals</option>
+            <option value="equals">Equals</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Threshold Value</label><input type="number" id="iot-alert-threshold" step="0.01"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Cooldown (minutes)</label><input type="number" id="iot-alert-cooldown" value="60"></div>
+        <div class="form-group"><label><input type="checkbox" id="iot-alert-enabled" checked> Enabled</label></div>
+      </div>
+      <div class="form-group"><label>Notification Channels</label>
+        <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;margin-bottom:4px">
+          <input type="checkbox" id="iot-alert-push" checked> Push Notification
+        </label>
+        <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input type="checkbox" id="iot-alert-email"> Email
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-ghost" onclick="closeModal('modal-iot-alert-rule')">Cancel</button>
+      <button type="button" class="btn btn-blue" onclick="submitIotAlertRule()">Save Rule</button>
+    </div>
+  </div>
+</div>
+
+<!-- Device Key Display Modal -->
+<div class="modal-overlay" id="modal-device-key">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <div class="modal-title">Device API Key</div>
+      <button class="modal-close" onclick="closeModal('modal-device-key')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--slate);margin-bottom:12px">
+        Copy this key to your ESP32 firmware. It cannot be retrieved again after closing this dialog.
+      </p>
+      <div style="background:var(--paper);padding:12px;border-radius:6px;font-family:monospace;font-size:14px;word-break:break-all;border:1px solid var(--mist);margin-bottom:12px" id="device-key-display"></div>
+      <button class="btn btn-sm btn-blue" onclick="navigator.clipboard.writeText(document.getElementById('device-key-display').textContent);toast('Copied to clipboard')"> Copy to Clipboard</button>
+      <div style="margin-top:16px;font-size:12px;color:var(--slate)">
+        <strong>ESP32 Usage:</strong> Send POST to <code style="background:var(--mist);padding:2px 6px;border-radius:3px">/api/iot/telemetry</code> with header <code style="background:var(--mist);padding:2px 6px;border-radius:3px">X-Device-Key: YOUR_KEY</code>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-blue" onclick="closeModal('modal-device-key')">I've Saved It</button>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;padding:10px 0 14px;font-family:'Prisma','DM Serif Display',serif;font-size:11px;color:rgba(0,0,0,0.28);letter-spacing:0.04em;user-select:none;" id="app-version-footer"></div>
   <div class="modal" style="max-width:460px">
     <div class="modal-header">
       <div class="modal-title"> Welcome to MVP Backoffice</div>
@@ -10378,6 +10858,1243 @@ async function refreshMapPins() {
 }
 
 // (toggleDashSection defined above in map block)
+
+/* ===================== ESTIMATES ===================== */
+let _estFullList = [];
+let adminCurrentEstimateId = null;
+let estCustomerSearchTimer = null;
+
+async function loadEstimates() {
+  const tbody = document.getElementById('estimates-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  const status = document.getElementById('est-filter-status')?.value || '';
+  const params = new URLSearchParams();
+  if (status) params.set('status', status);
+  const qs = params.toString();
+  try {
+    const list = await api('GET', '/admin/estimates' + (qs ? '?' + qs : ''));
+    _estFullList = list || [];
+    const summaryEl = document.getElementById('est-summary-bar');
+    if (summaryEl && _estFullList.length) {
+      const total = _estFullList.reduce((s, e) => s + parseFloat(e.total || 0), 0);
+      const sent = _estFullList.filter(e => e.status === 'sent').length;
+      const approved = _estFullList.filter(e => e.status === 'approved').length;
+      summaryEl.innerHTML = `${_estFullList.length} estimate${_estFullList.length !== 1 ? 's' : ''} · $${total.toLocaleString('en-US', { minimumFractionDigits: 2 })} total · ${sent} awaiting response · ${approved} approved`;
+    } else if (summaryEl) {
+      summaryEl.textContent = 'No estimates found.';
+    }
+    renderEstimateRows(_estFullList);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="7" style="color:var(--warn);padding:16px">${e.message}</td></tr>`;
+  }
+}
+
+function renderEstimateRows(list) {
+  const tbody = document.getElementById('estimates-body');
+  if (!tbody) return;
+  closeEstDetailPanel();
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--slate);padding:24px">No estimates found.</td></tr>';
+    return;
+  }
+  const statusColors = { draft: 'badge-gray', sent: 'badge-blue', approved: 'badge-ok', rejected: 'badge-err', expired: 'badge-warn', converted: 'badge-blue' };
+  tbody.innerHTML = list.map(est => {
+    const isAwaiting = est.status === 'sent';
+    return `<tr style="${isAwaiting ? 'background:rgba(42,143,255,0.07)' : ''}">
+      <td style="font-weight:600">${escHtml(est.estimate_number)}</td>
+      <td>${nameLines(est)}</td>
+      <td>${est.issue_date}</td>
+      <td>${est.expiry_date || '—'}</td>
+      <td style="font-weight:600">$${parseFloat(est.total).toFixed(2)}</td>
+      <td><span class="badge ${statusColors[est.status] || 'badge-gray'}">${est.status}</span></td>
+      <td><button class="btn btn-sm btn-blue" onclick="openEstimateDetail(${est.estimate_id})">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openCreateEstimate() {
+  document.getElementById('modal-est-title').textContent = 'New Estimate';
+  document.getElementById('est-customer-id').value = '';
+  document.getElementById('est-customer-search').value = '';
+  document.getElementById('est-customer-search').style.display = '';
+  document.getElementById('est-customer-selected').style.display = 'none';
+  document.getElementById('est-appointment-id').innerHTML = '<option value="">None</option>';
+  document.getElementById('est-expiry-date').value = '';
+  document.getElementById('est-notes').value = '';
+  openModal('modal-create-estimate');
+}
+
+function searchEstCustomer() {
+  const q = document.getElementById('est-customer-search').value.trim();
+  clearTimeout(estCustomerSearchTimer);
+  const results = document.getElementById('est-customer-results');
+  if (q.length < 2) { results.style.display = 'none'; return; }
+  estCustomerSearchTimer = setTimeout(async () => {
+    try {
+      const customers = await api('GET', `/admin/customers?search=${encodeURIComponent(q)}`);
+      if (!customers.length) {
+        results.innerHTML = '<div style="padding:12px 16px;font-size:13px;color:var(--slate)">No customers found</div>';
+        results.style.display = 'block'; return;
+      }
+      results.innerHTML = customers.map(c => `
+        <div onclick="selectEstCustomer(${c.customer_id},'${escHtml(c.first_name + ' ' + c.last_name)}','${escHtml(c.phone || '')}')"
+             style="padding:10px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--mist)">
+          ${nameLines({ customer_name: c.first_name + ' ' + c.last_name, company_name: c.company_name }, 'font-weight:600;display:inline', `<span style="color:var(--slate);margin-left:8px;font-weight:400">${escHtml(c.phone || '')}</span>`)}
+        </div>`).join('');
+      results.style.display = 'block';
+    } catch (e) {}
+  }, 300);
+}
+
+async function selectEstCustomer(id, name, phone) {
+  document.getElementById('est-customer-id').value = id;
+  document.getElementById('est-customer-search').style.display = 'none';
+  document.getElementById('est-customer-results').style.display = 'none';
+  document.getElementById('est-customer-selected').style.display = 'flex';
+  document.getElementById('est-customer-selected-name').textContent = name + (phone ? ' · ' + phone : '');
+  try {
+    const appts = await api('GET', `/admin/appointments?customer_id=${id}`).catch(() => []);
+    const sel = document.getElementById('est-appointment-id');
+    sel.innerHTML = '<option value="">None</option>' +
+      (Array.isArray(appts) ? appts : []).map(a =>
+        `<option value="${a.appointment_id}">${escHtml(a.service_type)} - ${a.confirmed_date || a.requested_date}</option>`
+      ).join('');
+  } catch (e) {}
+}
+
+function clearEstCustomer() {
+  document.getElementById('est-customer-id').value = '';
+  document.getElementById('est-customer-search').value = '';
+  document.getElementById('est-customer-search').style.display = '';
+  document.getElementById('est-customer-selected').style.display = 'none';
+  document.getElementById('est-appointment-id').innerHTML = '<option value="">None</option>';
+}
+
+async function submitCreateEstimate() {
+  const customerId = document.getElementById('est-customer-id').value;
+  const appointmentId = document.getElementById('est-appointment-id').value;
+  const expiryDate = document.getElementById('est-expiry-date').value || null;
+  const notes = document.getElementById('est-notes').value.trim();
+  if (!customerId) return toast('Please select a customer', 'error');
+  try {
+    const est = await api('POST', '/admin/estimates', {
+      customer_id: parseInt(customerId),
+      appointment_id: appointmentId ? parseInt(appointmentId) : null,
+      expiry_date: expiryDate,
+      notes: notes || null,
+    });
+    closeModal('modal-create-estimate');
+    await loadEstimates();
+    adminCurrentEstimateId = est.estimate_id;
+    await openEstimateDetail(est.estimate_id);
+    toast('Estimate created');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function openEstimateDetail(estimateId) {
+  adminCurrentEstimateId = estimateId;
+  const panel = document.getElementById('est-detail-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('est-panel-number').textContent = '';
+  document.getElementById('est-panel-badge').className = 'badge';
+  document.getElementById('est-panel-body').innerHTML = '<div class="loading" style="padding:24px"><div class="spinner"></div></div>';
+  try {
+    const est = await api('GET', `/admin/estimates/${estimateId}`);
+    renderEstimateDetail(est);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function closeEstDetailPanel() {
+  document.getElementById('est-detail-panel').style.display = 'none';
+  adminCurrentEstimateId = null;
+}
+
+function renderEstimateDetail(est) {
+  const statusColors = { draft: 'badge-gray', sent: 'badge-blue', approved: 'badge-ok', rejected: 'badge-err', expired: 'badge-warn', converted: 'badge-blue' };
+  document.getElementById('est-panel-number').textContent = est.estimate_number;
+  const badge = document.getElementById('est-panel-badge');
+  badge.textContent = est.status;
+  badge.className = 'badge ' + (statusColors[est.status] || 'badge-gray');
+
+  const headerHtml = `
+    <div class="card" style="margin-bottom:16px;padding:14px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+        <div>${nameLines({ customer_name: ((est.customer_first_name || '') + ' ' + (est.customer_last_name || '')).trim(), company_name: est.company_name }, 'font-weight:700')}${escHtml(est.service_address || '')} ${escHtml(est.service_city || '')} ${escHtml(est.service_state || '')}<br>${escHtml(est.phone || '')} · ${escHtml(est.email || '')}</div>
+        <div style="text-align:right">
+          Issue date: ${est.issue_date}<br>
+          ${est.expiry_date ? 'Expiry date: ' + est.expiry_date + '<br>' : ''}
+          Tax rate: ${(parseFloat(est.tax_rate || 0) * 100).toFixed(2)}%<br>
+          ${est.service_type ? 'Service: ' + escHtml(est.service_type) : ''}
+        </div>
+      </div>
+      ${est.notes ? `<div style="margin-top:10px;padding:8px 12px;background:var(--mist);border-radius:6px;font-size:12px">${escHtml(est.notes)}</div>` : ''}
+      ${est.customer_response_notes ? `<div style="margin-top:6px;padding:8px 12px;background:rgba(18,196,168,0.1);border-radius:6px;font-size:12px;color:var(--air)"><strong>Customer response:</strong> ${escHtml(est.customer_response_notes)}</div>` : ''}
+    </div>`;
+
+  const linesHtml = est.lines && est.lines.length
+    ? `<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead><tr>
+            <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--mist)">Description</th>
+            <th style="padding:8px 12px;text-align:right;border-bottom:2px solid var(--mist)">Qty</th>
+            <th style="padding:8px 12px;text-align:right;border-bottom:2px solid var(--mist)">Price</th>
+            <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--mist)">Tax</th>
+            <th style="padding:8px 12px;text-align:right;border-bottom:2px solid var(--mist)">Total</th>
+            <th style="padding:8px 12px;border-bottom:2px solid var(--mist)"></th>
+          </tr></thead>
+          <tbody>${est.lines.map(l => `<tr>
+            <td style="padding:10px 12px;border-bottom:1px solid var(--mist)">
+              <span style="font-size:10px;color:var(--slate);text-transform:uppercase">${l.line_type}</span><br>
+              <strong>${escHtml(l.line_name || l.description)}</strong>
+            </td>
+            <td style="padding:10px 12px;text-align:right;border-bottom:1px solid var(--mist)">${l.quantity}</td>
+            <td style="padding:10px 12px;text-align:right;border-bottom:1px solid var(--mist)">$${parseFloat(l.unit_price).toFixed(2)}</td>
+            <td style="padding:10px 12px;text-align:center;border-bottom:1px solid var(--mist)">${l.is_taxable ? '' : ''}</td>
+            <td style="padding:10px 12px;text-align:right;border-bottom:1px solid var(--mist);font-weight:500">$${parseFloat(l.line_total).toFixed(2)}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid var(--mist)">
+              <button class="btn btn-sm btn-ghost" onclick="openEditEstLine(${l.line_id})">Edit</button>
+              <button class="btn btn-sm" style="background:var(--warn);color:#fff;padding:4px 10px;border-radius:4px;border:none;cursor:pointer;font-size:11px;margin-left:4px" onclick="deleteEstLine(${l.line_id})"></button>
+            </td>
+          </tr>`).join('')}</tbody>
+          <tfoot>
+            <tr><td colspan="4" style="text-align:right;padding:8px 12px;font-weight:500">Subtotal</td><td style="text-align:right;padding:8px 12px">$${parseFloat(est.subtotal).toFixed(2)}</td><td></td></tr>
+            <tr><td colspan="4" style="text-align:right;padding:4px 12px;color:var(--slate)">Tax (${(parseFloat(est.tax_rate || 0) * 100).toFixed(2)}%)</td><td style="text-align:right;padding:4px 12px;color:var(--slate)">$${parseFloat(est.tax_amount).toFixed(2)}</td><td></td></tr>
+            <tr><td colspan="4" style="text-align:right;padding:10px 12px;font-weight:700;font-size:16px">Total</td><td style="text-align:right;padding:10px 12px;font-weight:700;font-size:16px;color:var(--water)">$${parseFloat(est.total).toFixed(2)}</td><td></td></tr>
+          </tfoot>
+        </table>
+      </div>`
+    : '<div class="card" style="padding:16px;color:var(--slate);font-size:13px;margin-bottom:16px">No line items yet.</div>';
+
+  let actionsHtml = '<div style="display:flex;gap:8px;flex-wrap:wrap">';
+  if (est.status === 'draft') {
+    actionsHtml += `<button class="btn btn-sm btn-blue" onclick="openAddEstLine()">+ Add Line</button>`;
+    actionsHtml += `<button class="btn btn-sm" style="background:var(--water);color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px;font-weight:600" onclick="sendEstimate(${est.estimate_id})"> Send to Customer</button>`;
+    actionsHtml += `<button class="btn btn-sm" style="background:var(--warn);color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px" onclick="deleteEstimate(${est.estimate_id})">Delete</button>`;
+  }
+  if (est.status === 'approved') {
+    actionsHtml += `<button class="btn btn-sm" style="background:#10b981;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px;font-weight:600" onclick="convertEstimateToInvoice(${est.estimate_id})"> Convert to Invoice</button>`;
+  }
+  actionsHtml += '</div>';
+
+  document.getElementById('est-panel-body').innerHTML = headerHtml + linesHtml + actionsHtml;
+}
+
+function openAddEstLine() {
+  document.getElementById('modal-est-line-title').textContent = 'Add Line Item';
+  document.getElementById('est-line-id').value = '';
+  document.getElementById('est-line-type').value = 'custom';
+  document.getElementById('est-line-name').value = '';
+  document.getElementById('est-line-desc').value = '';
+  document.getElementById('est-line-qty').value = '1';
+  document.getElementById('est-line-price').value = '0';
+  document.getElementById('est-line-taxable').checked = false;
+  openModal('modal-est-line');
+}
+
+function openEditEstLine(lineId) {
+  const est = _estFullList.find(e => e.estimate_id === adminCurrentEstimateId);
+  // We need to fetch detail again or cache it; simpler to just open with blank and let submit detect edit
+  document.getElementById('modal-est-line-title').textContent = 'Edit Line Item';
+  document.getElementById('est-line-id').value = lineId;
+  // Fetch the estimate detail to populate fields
+  api('GET', `/admin/estimates/${adminCurrentEstimateId}`).then(est => {
+    const line = est.lines.find(l => l.line_id === lineId);
+    if (line) {
+      document.getElementById('est-line-type').value = line.line_type;
+      document.getElementById('est-line-name').value = line.line_name || '';
+      document.getElementById('est-line-desc').value = line.description || '';
+      document.getElementById('est-line-qty').value = line.quantity;
+      document.getElementById('est-line-price').value = line.unit_price;
+      document.getElementById('est-line-taxable').checked = !!line.is_taxable;
+    }
+  });
+  openModal('modal-est-line');
+}
+
+async function submitEstLine() {
+  const lineId = document.getElementById('est-line-id').value;
+  const lineType = document.getElementById('est-line-type').value;
+  const lineName = document.getElementById('est-line-name').value.trim();
+  const description = document.getElementById('est-line-desc').value.trim();
+  const quantity = parseFloat(document.getElementById('est-line-qty').value) || 1;
+  const unitPrice = parseFloat(document.getElementById('est-line-price').value) || 0;
+  const isTaxable = document.getElementById('est-line-taxable').checked ? 1 : 0;
+
+  if (!lineName && !description) return toast('Line name is required', 'error');
+
+  try {
+    if (lineId) {
+      await api('PUT', `/admin/estimates/${adminCurrentEstimateId}/lines/${lineId}`, {
+        line_type: lineType, line_name: lineName, description, quantity, unit_price: unitPrice, is_taxable: isTaxable
+      });
+    } else {
+      await api('POST', `/admin/estimates/${adminCurrentEstimateId}/lines`, {
+        line_type: lineType, line_name: lineName, description, quantity, unit_price: unitPrice, is_taxable: isTaxable
+      });
+    }
+    closeModal('modal-est-line');
+    await openEstimateDetail(adminCurrentEstimateId);
+    toast('Line saved');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteEstLine(lineId) {
+  if (!confirm('Remove this line item?')) return;
+  try {
+    await api('DELETE', `/admin/estimates/${adminCurrentEstimateId}/lines/${lineId}`);
+    await openEstimateDetail(adminCurrentEstimateId);
+    toast('Line removed');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function sendEstimate(estimateId) {
+  if (!confirm('Mark this estimate as sent to the customer?')) return;
+  try {
+    await api('POST', `/admin/estimates/${estimateId}/send`);
+    await openEstimateDetail(estimateId);
+    await loadEstimates();
+    toast('Estimate marked as sent');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function convertEstimateToInvoice(estimateId) {
+  if (!confirm('Convert this approved estimate to a draft invoice?')) return;
+  try {
+    const result = await api('POST', `/admin/estimates/${estimateId}/convert`);
+    await openEstimateDetail(estimateId);
+    await loadEstimates();
+    toast('Estimate converted to invoice #' + result.invoice_id);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteEstimate(estimateId) {
+  if (!confirm('Delete this draft estimate? This cannot be undone.')) return;
+  try {
+    await api('DELETE', `/admin/estimates/${estimateId}`);
+    closeEstDetailPanel();
+    await loadEstimates();
+    toast('Estimate deleted');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+/* ===================== SERVICE CONTRACTS ===================== */
+let _contractFullList = [];
+let adminCurrentContractId = null;
+let contractCustomerSearchTimer = null;
+
+async function loadContracts() {
+  const tbody = document.getElementById('contracts-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  const status = document.getElementById('contract-filter-status')?.value || '';
+  const params = new URLSearchParams();
+  if (status) params.set('status', status);
+  const qs = params.toString();
+  try {
+    const list = await api('GET', '/admin/contracts' + (qs ? '?' + qs : ''));
+    _contractFullList = list || [];
+    const summaryEl = document.getElementById('contract-summary-bar');
+    if (summaryEl && _contractFullList.length) {
+      const active = _contractFullList.filter(c => c.status === 'active').length;
+      summaryEl.innerHTML = `${_contractFullList.length} contract${_contractFullList.length !== 1 ? 's' : ''} · ${active} active`;
+    } else if (summaryEl) {
+      summaryEl.textContent = 'No contracts found.';
+    }
+    renderContractRows(_contractFullList);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="8" style="color:var(--warn);padding:16px">${e.message}</td></tr>`;
+  }
+}
+
+function renderContractRows(list) {
+  const tbody = document.getElementById('contracts-body');
+  if (!tbody) return;
+  closeContractDetailPanel();
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--slate);padding:24px">No contracts found.</td></tr>';
+    return;
+  }
+  const statusColors = { draft: 'badge-gray', active: 'badge-ok', expired: 'badge-warn', cancelled: 'badge-err' };
+  tbody.innerHTML = list.map(c => {
+    const isActive = c.status === 'active';
+    return `<tr style="${isActive ? 'background:rgba(16,185,129,0.07)' : ''}">
+      <td style="font-weight:600">${escHtml(c.contract_number)}</td>
+      <td>${escHtml(c.name)}</td>
+      <td>${nameLines(c)}</td>
+      <td><span class="badge ${statusColors[c.status] || 'badge-gray'}">${c.status}</span></td>
+      <td>${c.start_date}</td>
+      <td>${c.end_date || (c.auto_renew ? 'Auto-renew' : '—')}</td>
+      <td style="font-weight:600">$${parseFloat(c.cycle_price).toFixed(2)}/${c.billing_cycle}</td>
+      <td><button class="btn btn-sm btn-blue" onclick="openContractDetail(${c.contract_id})">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function openCreateContract() {
+  document.getElementById('modal-contract-title').textContent = 'New Service Contract';
+  document.getElementById('contract-edit-id').value = '';
+  document.getElementById('contract-customer-id').value = '';
+  document.getElementById('contract-customer-search').value = '';
+  document.getElementById('contract-customer-search').style.display = '';
+  document.getElementById('contract-customer-selected').style.display = 'none';
+  document.getElementById('contract-name').value = '';
+  document.getElementById('contract-start-date').value = '';
+  document.getElementById('contract-end-date').value = '';
+  document.getElementById('contract-frequency').value = 'annual';
+  document.getElementById('contract-custom-interval').value = '365';
+  document.getElementById('contract-custom-interval-group').style.display = 'none';
+  document.getElementById('contract-billing-cycle').value = 'annual';
+  document.getElementById('contract-cycle-price').value = '0';
+  document.getElementById('contract-auto-renew').checked = false;
+  document.getElementById('contract-renew-term').value = '12';
+  document.getElementById('contract-discount').value = '0';
+  document.getElementById('contract-notes').value = '';
+  openModal('modal-create-contract');
+}
+
+function searchContractCustomer() {
+  const q = document.getElementById('contract-customer-search').value.trim();
+  clearTimeout(contractCustomerSearchTimer);
+  const results = document.getElementById('contract-customer-results');
+  if (q.length < 2) { results.style.display = 'none'; return; }
+  contractCustomerSearchTimer = setTimeout(async () => {
+    try {
+      const customers = await api('GET', `/admin/customers?search=${encodeURIComponent(q)}`);
+      if (!customers.length) {
+        results.innerHTML = '<div style="padding:12px 16px;font-size:13px;color:var(--slate)">No customers found</div>';
+        results.style.display = 'block'; return;
+      }
+      results.innerHTML = customers.map(c => `
+        <div onclick="selectContractCustomer(${c.customer_id},'${escHtml(c.first_name + ' ' + c.last_name)}','${escHtml(c.phone || '')}')"
+             style="padding:10px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--mist)">
+          ${nameLines({ customer_name: c.first_name + ' ' + c.last_name, company_name: c.company_name }, 'font-weight:600;display:inline')}
+        </div>`).join('');
+      results.style.display = 'block';
+    } catch (e) {}
+  }, 300);
+}
+
+function selectContractCustomer(id, name, phone) {
+  document.getElementById('contract-customer-id').value = id;
+  document.getElementById('contract-customer-search').style.display = 'none';
+  document.getElementById('contract-customer-results').style.display = 'none';
+  document.getElementById('contract-customer-selected').style.display = 'flex';
+  document.getElementById('contract-customer-selected-name').textContent = name + (phone ? ' · ' + phone : '');
+}
+
+function clearContractCustomer() {
+  document.getElementById('contract-customer-id').value = '';
+  document.getElementById('contract-customer-search').value = '';
+  document.getElementById('contract-customer-search').style.display = '';
+  document.getElementById('contract-customer-selected').style.display = 'none';
+}
+
+async function submitCreateContract() {
+  const editId = document.getElementById('contract-edit-id').value;
+  const customerId = document.getElementById('contract-customer-id').value;
+  const name = document.getElementById('contract-name').value.trim();
+  const startDate = document.getElementById('contract-start-date').value;
+  const endDate = document.getElementById('contract-end-date').value || null;
+  const frequency = document.getElementById('contract-frequency').value;
+  const customInterval = frequency === 'custom' ? parseInt(document.getElementById('contract-custom-interval').value) : null;
+  const billingCycle = document.getElementById('contract-billing-cycle').value;
+  const cyclePrice = parseFloat(document.getElementById('contract-cycle-price').value) || 0;
+  const autoRenew = document.getElementById('contract-auto-renew').checked ? 1 : 0;
+  const renewTerm = parseInt(document.getElementById('contract-renew-term').value) || 12;
+  const discountPercent = parseFloat(document.getElementById('contract-discount').value) || null;
+  const notes = document.getElementById('contract-notes').value.trim();
+
+  if (!customerId) return toast('Please select a customer', 'error');
+  if (!name) return toast('Contract name is required', 'error');
+  if (!startDate) return toast('Start date is required', 'error');
+
+  const body = {
+    customer_id: parseInt(customerId), name, start_date: startDate, end_date: endDate,
+    frequency, custom_interval_days: customInterval, billing_cycle, cycle_price: cyclePrice,
+    auto_renew: autoRenew, renew_term_months: renewTerm, discount_percent: discountPercent,
+    notes: notes || null,
+  };
+
+  try {
+    if (editId) {
+      await api('PUT', `/admin/contracts/${editId}`, body);
+      closeModal('modal-create-contract');
+      await loadContracts();
+      if (adminCurrentContractId == editId) await openContractDetail(editId);
+      toast('Contract updated');
+    } else {
+      const contract = await api('POST', '/admin/contracts', body);
+      closeModal('modal-create-contract');
+      await loadContracts();
+      adminCurrentContractId = contract.contract_id;
+      await openContractDetail(contract.contract_id);
+      toast('Contract created');
+    }
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function openContractDetail(contractId) {
+  adminCurrentContractId = contractId;
+  const panel = document.getElementById('contract-detail-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('contract-panel-number').textContent = '';
+  document.getElementById('contract-panel-badge').className = 'badge';
+  document.getElementById('contract-panel-body').innerHTML = '<div class="loading" style="padding:24px"><div class="spinner"></div></div>';
+  try {
+    const contract = await api('GET', `/admin/contracts/${contractId}`);
+    renderContractDetail(contract);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function closeContractDetailPanel() {
+  document.getElementById('contract-detail-panel').style.display = 'none';
+  adminCurrentContractId = null;
+}
+
+function renderContractDetail(c) {
+  const statusColors = { draft: 'badge-gray', active: 'badge-ok', expired: 'badge-warn', cancelled: 'badge-err' };
+  document.getElementById('contract-panel-number').textContent = c.contract_number + ' — ' + escHtml(c.name);
+  const badge = document.getElementById('contract-panel-badge');
+  badge.textContent = c.status;
+  badge.className = 'badge ' + (statusColors[c.status] || 'badge-gray');
+
+  let html = `
+    <div class="card" style="margin-bottom:16px;padding:14px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+        <div>
+          <strong>${nameLines({ customer_name: ((c.customer_first_name || '') + ' ' + (c.customer_last_name || '')).trim(), company_name: c.company_name }, 'font-weight:700')}</strong><br>
+          ${escHtml(c.service_address || '')} ${escHtml(c.service_city || '')} ${escHtml(c.service_state || '')}<br>
+          ${escHtml(c.phone || '')} · ${escHtml(c.email || '')}
+        </div>
+        <div style="text-align:right">
+          Start: ${c.start_date}<br>
+          End: ${c.end_date || (c.auto_renew ? 'Auto-renewing' : 'Ongoing')}<br>
+          Frequency: ${c.frequency}${c.frequency === 'custom' ? ' (' + (c.custom_interval_days || 365) + ' days)' : ''}<br>
+          Billing: ${c.billing_cycle} · $${parseFloat(c.cycle_price).toFixed(2)}
+          ${c.discount_percent ? '<br>Discount: ' + c.discount_percent + '%' : ''}
+        </div>
+      </div>
+      ${c.notes ? `<div style="margin-top:10px;padding:8px 12px;background:var(--mist);border-radius:6px;font-size:12px">${escHtml(c.notes)}</div>` : ''}
+    </div>`;
+
+  // Equipment
+  html += '<div class="section-label" style="margin-bottom:8px">Covered Equipment</div>';
+  if (c.equipment && c.equipment.length) {
+    html += `<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr><th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--mist)">Type</th><th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--mist)">Model</th><th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--mist)">Next Due</th><th style="padding:8px 12px;border-bottom:2px solid var(--mist)"></th></tr></thead>
+        <tbody>${c.equipment.map(eq => `<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">${escHtml(eq.type_name)}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">${escHtml(eq.model || '—')}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">${eq.next_service_due || '—'}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)"><button class="btn btn-sm" style="background:var(--warn);color:#fff;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;font-size:11px" onclick="removeContractEquipment(${c.contract_id},${eq.equipment_id})">Remove</button></td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  } else {
+    html += '<div class="card" style="padding:12px;color:var(--slate);font-size:13px;margin-bottom:16px">No equipment assigned.</div>';
+  }
+
+  // Service types
+  html += '<div class="section-label" style="margin-bottom:8px">Included Service Types</div>';
+  if (c.service_types && c.service_types.length) {
+    html += `<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr><th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--mist)">Service Type</th><th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--mist)">Visits/Cycle</th><th style="padding:8px 12px;border-bottom:2px solid var(--mist)"></th></tr></thead>
+        <tbody>${c.service_types.map(st => `<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">${escHtml(st.service_type_name)}</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--mist)">${st.included_visits}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)"><button class="btn btn-sm" style="background:var(--warn);color:#fff;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;font-size:11px" onclick="removeContractServiceType(${c.contract_id},${st.service_type_id})">Remove</button></td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  } else {
+    html += '<div class="card" style="padding:12px;color:var(--slate);font-size:13px;margin-bottom:16px">No service types assigned.</div>';
+  }
+
+  // Actions
+  let actionsHtml = '<div style="display:flex;gap:8px;flex-wrap:wrap">';
+  if (c.status === 'draft') {
+    actionsHtml += `<button class="btn btn-sm btn-blue" onclick="editContract(${c.contract_id})">Edit</button>`;
+    actionsHtml += `<button class="btn btn-sm" style="background:#10b981;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px;font-weight:600" onclick="activateContract(${c.contract_id})">Activate</button>`;
+    actionsHtml += `<button class="btn btn-sm" style="background:var(--warn);color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px" onclick="deleteContract(${c.contract_id})">Delete</button>`;
+  }
+  if (c.status === 'active') {
+    actionsHtml += `<button class="btn btn-sm btn-blue" onclick="editContract(${c.contract_id})">Edit</button>`;
+    actionsHtml += `<button class="btn btn-sm" style="background:#10b981;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px;font-weight:600" onclick="scheduleContractAppointment(${c.contract_id})">Schedule Visit</button>`;
+    actionsHtml += `<button class="btn btn-sm" style="background:#6366f1;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px;font-weight:600" onclick="generateContractInvoice(${c.contract_id})">Generate Invoice</button>`;
+    actionsHtml += `<button class="btn btn-sm" style="background:#f59e0b;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px" onclick="renewContract(${c.contract_id})">Renew</button>`;
+    actionsHtml += `<button class="btn btn-sm" style="background:var(--warn);color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px" onclick="cancelContract(${c.contract_id})">Cancel</button>`;
+  }
+  actionsHtml += '</div>';
+
+  document.getElementById('contract-panel-body').innerHTML = html + actionsHtml;
+}
+
+function editContract(contractId) {
+  api('GET', `/admin/contracts/${contractId}`).then(c => {
+    document.getElementById('modal-contract-title').textContent = 'Edit Contract';
+    document.getElementById('contract-edit-id').value = c.contract_id;
+    document.getElementById('contract-customer-id').value = c.customer_id;
+    document.getElementById('contract-customer-search').style.display = 'none';
+    document.getElementById('contract-customer-selected').style.display = 'flex';
+    document.getElementById('contract-customer-selected-name').textContent = c.customer_name;
+    document.getElementById('contract-name').value = c.name;
+    document.getElementById('contract-start-date').value = c.start_date;
+    document.getElementById('contract-end-date').value = c.end_date || '';
+    document.getElementById('contract-frequency').value = c.frequency;
+    document.getElementById('contract-custom-interval').value = c.custom_interval_days || 365;
+    document.getElementById('contract-custom-interval-group').style.display = c.frequency === 'custom' ? '' : 'none';
+    document.getElementById('contract-billing-cycle').value = c.billing_cycle;
+    document.getElementById('contract-cycle-price').value = c.cycle_price;
+    document.getElementById('contract-auto-renew').checked = !!c.auto_renew;
+    document.getElementById('contract-renew-term').value = c.renew_term_months || 12;
+    document.getElementById('contract-discount').value = c.discount_percent || 0;
+    document.getElementById('contract-notes').value = c.notes || '';
+    openModal('modal-create-contract');
+  });
+}
+
+async function activateContract(contractId) {
+  if (!confirm('Activate this contract?')) return;
+  try {
+    await api('POST', `/admin/contracts/${contractId}/activate`);
+    await openContractDetail(contractId);
+    await loadContracts();
+    toast('Contract activated');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function cancelContract(contractId) {
+  if (!confirm('Cancel this active contract?')) return;
+  try {
+    await api('POST', `/admin/contracts/${contractId}/cancel`);
+    await openContractDetail(contractId);
+    await loadContracts();
+    toast('Contract cancelled');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function renewContract(contractId) {
+  try {
+    await api('POST', `/admin/contracts/${contractId}/renew`);
+    await openContractDetail(contractId);
+    await loadContracts();
+    toast('Contract renewed');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteContract(contractId) {
+  if (!confirm('Delete this draft contract?')) return;
+  try {
+    await api('DELETE', `/admin/contracts/${contractId}`);
+    closeContractDetailPanel();
+    await loadContracts();
+    toast('Contract deleted');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function scheduleContractAppointment(contractId) {
+  const scheduledDate = prompt('Enter scheduled date (YYYY-MM-DD):');
+  if (!scheduledDate) return;
+  try {
+    // Get service types from the contract to let user pick
+    const contract = await api('GET', `/admin/contracts/${contractId}`);
+    if (!contract.service_types || !contract.service_types.length) {
+      return toast('No service types defined for this contract', 'error');
+    }
+    let serviceTypeId = contract.service_types[0].service_type_id;
+    if (contract.service_types.length > 1) {
+      const opts = contract.service_types.map((st, i) => `${i + 1}. ${st.service_type_name}`).join('\n');
+      const choice = prompt(`Select service type:\n${opts}\n\nEnter number:`);
+      const idx = parseInt(choice) - 1;
+      if (isNaN(idx) || idx < 0 || idx >= contract.service_types.length) return toast('Invalid selection', 'error');
+      serviceTypeId = contract.service_types[idx].service_type_id;
+    }
+    await api('POST', `/admin/contracts/${contractId}/schedule-appointment`, {
+      scheduled_date: scheduledDate,
+      service_type_id: serviceTypeId,
+    });
+    await openContractDetail(contractId);
+    toast('Appointment scheduled');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function generateContractInvoice(contractId) {
+  const cycleStart = prompt('Cycle start date (YYYY-MM-DD):', new Date().toISOString().split('T')[0]);
+  if (!cycleStart) return;
+  try {
+    const result = await api('POST', `/admin/contracts/${contractId}/generate-invoice`, {
+      cycle_start: cycleStart,
+      cycle_end: prompt('Cycle end date (YYYY-MM-DD):', new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]) || null,
+    });
+    await openContractDetail(contractId);
+    toast('Invoice #' + result.invoice_id + ' generated');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function removeContractEquipment(contractId, equipmentId) {
+  if (!confirm('Remove this equipment from the contract?')) return;
+  try {
+    await api('DELETE', `/admin/contracts/${contractId}/equipment/${equipmentId}`);
+    await openContractDetail(contractId);
+    toast('Equipment removed');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function removeContractServiceType(contractId, serviceTypeId) {
+  if (!confirm('Remove this service type from the contract?')) return;
+  try {
+    await api('DELETE', `/admin/contracts/${contractId}/service-types/${serviceTypeId}`);
+    await openContractDetail(contractId);
+    toast('Service type removed');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function loadExpiringContracts() {
+  try {
+    const list = await api('GET', '/admin/contracts/expiring?days=60');
+    if (!list.length) return toast('No contracts expiring in the next 60 days');
+    const names = list.map(c => `${c.contract_number} - ${c.name} (${c.customer_name}) ends ${c.end_date}`).join('\n');
+    alert('Expiring contracts:\n\n' + names);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// Frequency custom interval toggle
+document.addEventListener('change', (e) => {
+  if (e.target.id === 'contract-frequency') {
+    document.getElementById('contract-custom-interval-group').style.display = e.target.value === 'custom' ? '' : 'none';
+  }
+});
+
+/* ===================== IOT SENSORS ===================== */
+let _iotDevices = [];
+let _iotDeviceTypes = [];
+let adminCurrentDeviceId = null;
+let iotCustomerSearchTimer = null;
+
+async function loadIotDevices() {
+  const tbody = document.getElementById('iot-devices-body');
+  if (!tbody) return;
+  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+
+  const status = document.getElementById('iot-filter-status')?.value || '';
+  const typeId = document.getElementById('iot-filter-type')?.value || '';
+  const params = new URLSearchParams();
+  if (status) params.set('status', status);
+  if (typeId) params.set('type_id', typeId);
+  const qs = params.toString();
+
+  try {
+    const [devices, types, dashboard] = await Promise.all([
+      api('GET', '/admin/iot/devices' + (qs ? '?' + qs : '')),
+      api('GET', '/admin/iot/device-types').catch(() => []),
+      api('GET', '/admin/iot/dashboard').catch(() => null),
+    ]);
+
+    _iotDevices = devices || [];
+    _iotDeviceTypes = types || [];
+
+    // Populate type filter
+    const typeFilter = document.getElementById('iot-filter-type');
+    if (typeFilter) {
+      typeFilter.innerHTML = '<option value="">All Types</option>' +
+        types.map(t => `<option value="${t.type_id}">${t.type_name}</option>`).join('');
+    }
+
+    // Dashboard stats
+    if (dashboard) {
+      document.getElementById('iot-stat-active').textContent = dashboard.status_counts?.active || 0;
+      document.getElementById('iot-stat-offline').textContent = dashboard.status_counts?.offline || 0;
+      document.getElementById('iot-stat-alerts').textContent = dashboard.recent_alerts?.length || 0;
+      document.getElementById('iot-stat-total').textContent = Object.values(dashboard.status_counts || {}).reduce((a, b) => a + b, 0);
+
+      // Offline devices panel
+      const offlinePanel = document.getElementById('iot-offline-panel');
+      const offlineList = document.getElementById('iot-offline-list');
+      if (dashboard.offline_devices?.length) {
+        offlinePanel.style.display = '';
+        offlineList.innerHTML = dashboard.offline_devices.map(d => `
+          <div style="padding:10px 16px;border-bottom:1px solid var(--mist);display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:600;font-size:13px">${escHtml(d.device_name)}</div>
+              <div style="font-size:11px;color:var(--slate)">${escHtml(d.customer_name)} · ${escHtml(d.type_name)} · Last seen: ${d.last_seen || 'Never'}</div>
+            </div>
+            <button class="btn btn-sm btn-ghost" onclick="openIotDeviceDetail(${d.device_id})">View</button>
+          </div>
+        `).join('');
+      } else {
+        offlinePanel.style.display = 'none';
+      }
+
+      // Alerts panel
+      const alertsPanel = document.getElementById('iot-alerts-panel');
+      const alertsList = document.getElementById('iot-alerts-list');
+      if (dashboard.recent_alerts?.length) {
+        alertsPanel.style.display = '';
+        alertsList.innerHTML = dashboard.recent_alerts.map(a => `
+          <div style="padding:10px 16px;border-bottom:1px solid var(--mist);display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-weight:600;font-size:13px;color:#ef4444">${escHtml(a.message)}</div>
+              <div style="font-size:11px;color:var(--slate)">${escHtml(a.customer_name)} · ${escHtml(a.device_name)} · ${a.triggered_at}</div>
+            </div>
+            <button class="btn btn-sm btn-ghost" onclick="acknowledgeIotAlert(${a.device_id},${a.alert_id})">Acknowledge</button>
+          </div>
+        `).join('');
+      } else {
+        alertsPanel.style.display = 'none';
+      }
+    }
+
+    renderIotDeviceRows(_iotDevices);
+  } catch (e) {
+    tbody.innerHTML = `<tr><td colspan="7" style="color:var(--warn);padding:16px">${e.message}</td></tr>`;
+  }
+}
+
+function renderIotDeviceRows(list) {
+  const tbody = document.getElementById('iot-devices-body');
+  if (!tbody) return;
+  closeIotDetailPanel();
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--slate);padding:24px">No devices found. Click "Provision Device" to add one.</td></tr>';
+    return;
+  }
+  const statusColors = { active: 'badge-ok', inactive: 'badge-gray', offline: 'badge-warn', error: 'badge-err' };
+  tbody.innerHTML = list.map(d => {
+    const isActive = d.status === 'active';
+    const lastSeen = d.last_seen ? timeAgo(d.last_seen) : 'Never';
+    const readings = d.last_reading_summary ? JSON.parse(d.last_reading_summary) : {};
+    const readingSummary = Object.entries(readings).slice(0, 2).map(([k, v]) => `${k}: ${v.value}${v.unit ? ' ' + v.unit : ''}`).join(', ');
+    return `<tr style="${isActive ? 'background:rgba(16,185,129,0.05)' : ''}">
+      <td style="font-weight:600">${escHtml(d.device_name)}</td>
+      <td>${escHtml(d.type_name)}</td>
+      <td>${nameLines(d)}</td>
+      <td><span class="badge ${statusColors[d.status] || 'badge-gray'}">${d.status}</span></td>
+      <td style="font-size:12px">${lastSeen}</td>
+      <td style="font-size:12px;color:var(--slate)">${readingSummary || '—'}</td>
+      <td><button class="btn btn-sm btn-blue" onclick="openIotDeviceDetail(${d.device_id})">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function timeAgo(dateStr) {
+  if (!dateStr) return 'Never';
+  const now = new Date();
+  const then = new Date(dateStr);
+  const diff = Math.floor((now - then) / 1000);
+  if (diff < 60) return 'Just now';
+  if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+  return Math.floor(diff / 86400) + 'd ago';
+}
+
+function openProvisionDevice() {
+  document.getElementById('iot-customer-id').value = '';
+  document.getElementById('iot-customer-search').value = '';
+  document.getElementById('iot-customer-search').style.display = '';
+  document.getElementById('iot-customer-selected').style.display = 'none';
+  document.getElementById('iot-device-name').value = '';
+  document.getElementById('iot-mac-address').value = '';
+  document.getElementById('iot-device-notes').value = '';
+  document.getElementById('iot-equipment-id').innerHTML = '<option value="">None</option>';
+
+  // Load device types
+  api('GET', '/admin/iot/device-types').then(types => {
+    const sel = document.getElementById('iot-device-type');
+    sel.innerHTML = '<option value="">Select type…</option>' +
+      types.map(t => `<option value="${t.type_id}">${t.type_name}</option>`).join('');
+  });
+
+  openModal('modal-provision-device');
+}
+
+function searchIotCustomer() {
+  const q = document.getElementById('iot-customer-search').value.trim();
+  clearTimeout(iotCustomerSearchTimer);
+  const results = document.getElementById('iot-customer-results');
+  if (q.length < 2) { results.style.display = 'none'; return; }
+  iotCustomerSearchTimer = setTimeout(async () => {
+    try {
+      const customers = await api('GET', `/admin/customers?search=${encodeURIComponent(q)}`);
+      if (!customers.length) {
+        results.innerHTML = '<div style="padding:12px 16px;font-size:13px;color:var(--slate)">No customers found</div>';
+        results.style.display = 'block'; return;
+      }
+      results.innerHTML = customers.map(c => `
+        <div onclick="selectIotCustomer(${c.customer_id},'${escHtml(c.first_name + ' ' + c.last_name)}','${escHtml(c.phone || '')}')"
+             style="padding:10px 16px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--mist)">
+          ${nameLines({ customer_name: c.first_name + ' ' + c.last_name, company_name: c.company_name }, 'font-weight:600;display:inline')}
+        </div>`).join('');
+      results.style.display = 'block';
+    } catch (e) {}
+  }, 300);
+}
+
+function selectIotCustomer(id, name, phone) {
+  document.getElementById('iot-customer-id').value = id;
+  document.getElementById('iot-customer-search').style.display = 'none';
+  document.getElementById('iot-customer-results').style.display = 'none';
+  document.getElementById('iot-customer-selected').style.display = 'flex';
+  document.getElementById('iot-customer-selected-name').textContent = name + (phone ? ' · ' + phone : '');
+
+  // Load equipment for this customer
+  api('GET', `/admin/customers/${id}`).then(c => {
+    const sel = document.getElementById('iot-equipment-id');
+    sel.innerHTML = '<option value="">None</option>' +
+      (c.equipment || []).map(e => `<option value="${e.equipment_id}">${e.type_name}${e.model ? ' - ' + e.model : ''}</option>`).join('');
+  });
+}
+
+function clearIotCustomer() {
+  document.getElementById('iot-customer-id').value = '';
+  document.getElementById('iot-customer-search').value = '';
+  document.getElementById('iot-customer-search').style.display = '';
+  document.getElementById('iot-customer-selected').style.display = 'none';
+  document.getElementById('iot-equipment-id').innerHTML = '<option value="">None</option>';
+}
+
+async function submitProvisionDevice() {
+  const customerId = document.getElementById('iot-customer-id').value;
+  const typeId = document.getElementById('iot-device-type').value;
+  const equipmentId = document.getElementById('iot-equipment-id').value;
+  const deviceName = document.getElementById('iot-device-name').value.trim();
+  const macAddress = document.getElementById('iot-mac-address').value.trim();
+  const notes = document.getElementById('iot-device-notes').value.trim();
+
+  if (!customerId) return toast('Please select a customer', 'error');
+  if (!typeId) return toast('Please select a device type', 'error');
+
+  try {
+    const result = await api('POST', '/admin/iot/devices', {
+      customer_id: parseInt(customerId),
+      type_id: parseInt(typeId),
+      equipment_id: equipmentId ? parseInt(equipmentId) : null,
+      device_name: deviceName || 'IoT Device',
+      mac_address: macAddress || null,
+      notes: notes || null,
+    });
+
+    closeModal('modal-provision-device');
+
+    // Show device key
+    document.getElementById('device-key-display').textContent = result.device_key;
+    openModal('modal-device-key');
+
+    await loadIotDevices();
+    toast('Device provisioned');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function openIotDeviceDetail(deviceId) {
+  adminCurrentDeviceId = deviceId;
+  const panel = document.getElementById('iot-detail-panel');
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth' });
+  document.getElementById('iot-panel-name').textContent = '';
+  document.getElementById('iot-panel-badge').className = 'badge';
+  document.getElementById('iot-panel-body').innerHTML = '<div class="loading" style="padding:24px"><div class="spinner"></div></div>';
+  try {
+    const device = await api('GET', `/admin/iot/devices/${deviceId}`);
+    renderIotDeviceDetail(device);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function closeIotDetailPanel() {
+  document.getElementById('iot-detail-panel').style.display = 'none';
+  adminCurrentDeviceId = null;
+}
+
+function renderIotDeviceDetail(d) {
+  const statusColors = { active: 'badge-ok', inactive: 'badge-gray', offline: 'badge-warn', error: 'badge-err' };
+  document.getElementById('iot-panel-name').textContent = d.device_name;
+  const badge = document.getElementById('iot-panel-badge');
+  badge.textContent = d.status;
+  badge.className = 'badge ' + (statusColors[d.status] || 'badge-gray');
+
+  const readings = d.last_reading_summary ? JSON.parse(d.last_reading_summary) : {};
+  const readingCards = Object.entries(readings).map(([name, data]) => `
+    <div class="card" style="text-align:center;padding:16px;flex:1;min-width:120px">
+      <div style="font-size:24px;font-weight:700;color:var(--water)">${data.value}</div>
+      <div style="font-size:12px;color:var(--slate)">${name} (${data.unit})</div>
+      <div style="font-size:10px;color:var(--slate);margin-top:4px">${data.recorded_at}</div>
+    </div>
+  `).join('');
+
+  let html = `
+    <div class="card" style="margin-bottom:16px;padding:14px 18px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px">
+        <div>
+          <strong>${nameLines({ customer_name: ((d.customer_first_name || '') + ' ' + (d.customer_last_name || '')).trim(), company_name: d.company_name }, 'font-weight:700')}</strong><br>
+          ${escHtml(d.service_address || '')} ${escHtml(d.service_city || '')} ${escHtml(d.service_state || '')}<br>
+          ${escHtml(d.phone || '')} · ${escHtml(d.email || '')}
+        </div>
+        <div style="text-align:right">
+          Type: ${escHtml(d.type_name)}<br>
+          MAC: ${d.mac_address || '—'}<br>
+          Firmware: ${d.firmware_version || '—'}<br>
+          Last Seen: ${d.last_seen || 'Never'}<br>
+          ${d.equipment_model ? 'Equipment: ' + escHtml(d.equipment_type_name) + ' - ' + escHtml(d.equipment_model) : ''}
+        </div>
+      </div>
+      ${d.notes ? `<div style="margin-top:10px;padding:8px 12px;background:var(--mist);border-radius:6px;font-size:12px">${escHtml(d.notes)}</div>` : ''}
+    </div>`;
+
+  // Current readings
+  html += '<div class="section-label" style="margin-bottom:8px">Latest Readings</div>';
+  if (Object.keys(readings).length) {
+    html += `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">${readingCards}</div>`;
+  } else {
+    html += '<div class="card" style="padding:12px;color:var(--slate);font-size:13px;margin-bottom:16px">No readings yet.</div>';
+  }
+
+  // Alert rules
+  html += '<div class="section-label" style="margin-bottom:8px">Alert Rules <button class="btn btn-sm btn-blue" onclick="openAddIotAlertRule()" style="font-size:11px">+ Add Rule</button></div>';
+  if (d.alert_rules && d.alert_rules.length) {
+    html += `<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr>
+          <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--mist)">Rule</th>
+          <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--mist)">Metric</th>
+          <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--mist)">Condition</th>
+          <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--mist)">Threshold</th>
+          <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--mist)">Enabled</th>
+          <th style="padding:8px 12px;border-bottom:2px solid var(--mist)"></th>
+        </tr></thead>
+        <tbody>${d.alert_rules.map(r => `<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">${escHtml(r.rule_name)}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">${escHtml(r.metric_name)}</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--mist)">${r.condition}</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--mist)">${r.threshold_value}</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--mist)">${r.enabled ? '✅' : '❌'}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">
+            <button class="btn btn-sm btn-ghost" onclick="openEditIotAlertRule(${r.rule_id})">Edit</button>
+            <button class="btn btn-sm" style="background:var(--warn);color:#fff;padding:3px 8px;border-radius:4px;border:none;cursor:pointer;font-size:11px;margin-left:4px" onclick="deleteIotAlertRule(${r.rule_id})">Del</button>
+          </td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  } else {
+    html += '<div class="card" style="padding:12px;color:var(--slate);font-size:13px;margin-bottom:16px">No alert rules configured.</div>';
+  }
+
+  // Open alerts
+  if (d.open_alerts && d.open_alerts.length) {
+    html += `<div class="section-label" style="margin-bottom:8px;color:#ef4444">Open Alerts (${d.open_alerts.length})</div>`;
+    html += `<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr>
+          <th style="padding:8px 12px;text-align:left;border-bottom:2px solid var(--mist)">Message</th>
+          <th style="padding:8px 12px;text-align:center;border-bottom:2px solid var(--mist)">Triggered</th>
+          <th style="padding:8px 12px;border-bottom:2px solid var(--mist)"></th>
+        </tr></thead>
+        <tbody>${d.open_alerts.map(a => `<tr>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">${escHtml(a.message)}</td>
+          <td style="padding:8px 12px;text-align:center;border-bottom:1px solid var(--mist)">${a.triggered_at}</td>
+          <td style="padding:8px 12px;border-bottom:1px solid var(--mist)">
+            <button class="btn btn-sm btn-ghost" onclick="acknowledgeIotAlert(${d.device_id},${a.alert_id})">Acknowledge</button>
+          </td>
+        </tr>`).join('')}</tbody>
+      </table>
+    </div>`;
+  }
+
+  // Actions
+  let actionsHtml = '<div style="display:flex;gap:8px;flex-wrap:wrap">';
+  actionsHtml += `<button class="btn btn-sm btn-blue" onclick="editIotDevice(${d.device_id})">Edit Device</button>`;
+  actionsHtml += `<button class="btn btn-sm" style="background:var(--water);color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px;font-weight:600" onclick="showDeviceKey('${d.device_key}')">Show API Key</button>`;
+  actionsHtml += `<button class="btn btn-sm" style="background:#6366f1;color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px" onclick="viewIotReadings(${d.device_id})">View Readings</button>`;
+  actionsHtml += `<button class="btn btn-sm" style="background:var(--warn);color:#fff;border:none;border-radius:4px;cursor:pointer;padding:5px 12px;font-size:12px" onclick="deleteIotDevice(${d.device_id})">Delete Device</button>`;
+  actionsHtml += '</div>';
+
+  document.getElementById('iot-panel-body').innerHTML = html + actionsHtml;
+}
+
+function showDeviceKey(key) {
+  document.getElementById('device-key-display').textContent = key;
+  openModal('modal-device-key');
+}
+
+function editIotDevice(deviceId) {
+  api('GET', `/admin/iot/devices/${deviceId}`).then(d => {
+    document.getElementById('iot-customer-id').value = d.customer_id;
+    document.getElementById('iot-customer-search').style.display = 'none';
+    document.getElementById('iot-customer-selected').style.display = 'flex';
+    document.getElementById('iot-customer-selected-name').textContent = d.customer_name;
+    document.getElementById('iot-device-name').value = d.device_name;
+    document.getElementById('iot-mac-address').value = d.mac_address || '';
+    document.getElementById('iot-device-notes').value = d.notes || '';
+
+    // Load device types and select current
+    api('GET', '/admin/iot/device-types').then(types => {
+      const sel = document.getElementById('iot-device-type');
+      sel.innerHTML = types.map(t => `<option value="${t.type_id}" ${t.type_id == d.type_id ? 'selected' : ''}>${t.type_name}</option>`).join('');
+    });
+
+    // Load equipment
+    api('GET', `/admin/customers/${d.customer_id}`).then(c => {
+      const sel = document.getElementById('iot-equipment-id');
+      sel.innerHTML = '<option value="">None</option>' +
+        (c.equipment || []).map(e => `<option value="${e.equipment_id}" ${e.equipment_id == d.equipment_id ? 'selected' : ''}>${e.type_name}${e.model ? ' - ' + e.model : ''}</option>`).join('');
+    });
+
+    openModal('modal-provision-device');
+    // Override submit to update instead
+    document.querySelector('#modal-provision-device .btn-blue').onclick = async () => {
+      try {
+        await api('PUT', `/admin/iot/devices/${deviceId}`, {
+          device_name: document.getElementById('iot-device-name').value.trim(),
+          mac_address: document.getElementById('iot-mac-address').value.trim() || null,
+          notes: document.getElementById('iot-device-notes').value.trim() || null,
+          equipment_id: document.getElementById('iot-equipment-id').value ? parseInt(document.getElementById('iot-equipment-id').value) : null,
+        });
+        closeModal('modal-provision-device');
+        await openIotDeviceDetail(deviceId);
+        await loadIotDevices();
+        toast('Device updated');
+        // Restore original submit handler
+        document.querySelector('#modal-provision-device .btn-blue').onclick = submitProvisionDevice;
+      } catch (e) { toast(e.message, 'error'); }
+    };
+  });
+}
+
+async function deleteIotDevice(deviceId) {
+  if (!confirm('Delete this device and ALL its readings and alerts? This cannot be undone.')) return;
+  try {
+    await api('DELETE', `/admin/iot/devices/${deviceId}`);
+    closeIotDetailPanel();
+    await loadIotDevices();
+    toast('Device deleted');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function acknowledgeIotAlert(deviceId, alertId) {
+  try {
+    await api('POST', `/admin/iot/devices/${deviceId}/alerts/acknowledge`, { alert_id: alertId });
+    if (adminCurrentDeviceId == deviceId) await openIotDeviceDetail(deviceId);
+    await loadIotDevices();
+    toast('Alert acknowledged');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function openAddIotAlertRule() {
+  document.getElementById('modal-iot-alert-title').textContent = 'Add Alert Rule';
+  document.getElementById('iot-alert-rule-id').value = '';
+  document.getElementById('iot-alert-rule-name').value = '';
+  document.getElementById('iot-alert-threshold').value = '';
+  document.getElementById('iot-alert-cooldown').value = '60';
+  document.getElementById('iot-alert-enabled').checked = true;
+  document.getElementById('iot-alert-push').checked = true;
+  document.getElementById('iot-alert-email').checked = false;
+
+  // Populate metrics from device type
+  api('GET', `/admin/iot/devices/${adminCurrentDeviceId}`).then(d => {
+    const metrics = JSON.parse(d.device_type_metrics || '[]');
+    const sel = document.getElementById('iot-alert-metric');
+    sel.innerHTML = metrics.map(m => `<option value="${m.name}">${m.name} (${m.unit})</option>`).join('');
+  });
+
+  openModal('modal-iot-alert-rule');
+}
+
+function openEditIotAlertRule(ruleId) {
+  api('GET', `/admin/iot/devices/${adminCurrentDeviceId}`).then(d => {
+    const rule = d.alert_rules.find(r => r.rule_id === ruleId);
+    if (!rule) return;
+
+    document.getElementById('modal-iot-alert-title').textContent = 'Edit Alert Rule';
+    document.getElementById('iot-alert-rule-id').value = rule.rule_id;
+    document.getElementById('iot-alert-rule-name').value = rule.rule_name;
+    document.getElementById('iot-alert-condition').value = rule.condition;
+    document.getElementById('iot-alert-threshold').value = rule.threshold_value;
+    document.getElementById('iot-alert-cooldown').value = rule.cooldown_minutes;
+    document.getElementById('iot-alert-enabled').checked = !!rule.enabled;
+
+    const channels = JSON.parse(rule.notification_channels || '["push"]');
+    document.getElementById('iot-alert-push').checked = channels.includes('push');
+    document.getElementById('iot-alert-email').checked = channels.includes('email');
+
+    // Populate metrics
+    const metrics = JSON.parse(d.device_type_metrics || '[]');
+    const sel = document.getElementById('iot-alert-metric');
+    sel.innerHTML = metrics.map(m => `<option value="${m.name}" ${m.name === rule.metric_name ? 'selected' : ''}>${m.name} (${m.unit})</option>`).join('');
+
+    openModal('modal-iot-alert-rule');
+  });
+}
+
+async function submitIotAlertRule() {
+  const ruleId = document.getElementById('iot-alert-rule-id').value;
+  const metricName = document.getElementById('iot-alert-metric').value;
+  const ruleName = document.getElementById('iot-alert-rule-name').value.trim();
+  const condition = document.getElementById('iot-alert-condition').value;
+  const threshold = parseFloat(document.getElementById('iot-alert-threshold').value);
+  const cooldown = parseInt(document.getElementById('iot-alert-cooldown').value) || 60;
+  const enabled = document.getElementById('iot-alert-enabled').checked ? 1 : 0;
+  const channels = [];
+  if (document.getElementById('iot-alert-push').checked) channels.push('push');
+  if (document.getElementById('iot-alert-email').checked) channels.push('email');
+
+  if (!metricName) return toast('Metric is required', 'error');
+  if (!ruleName) return toast('Rule name is required', 'error');
+  if (isNaN(threshold)) return toast('Threshold value is required', 'error');
+
+  const body = { metric_name: metricName, rule_name: ruleName, condition, threshold_value: threshold, enabled, cooldown_minutes: cooldown, notification_channels: channels };
+
+  try {
+    if (ruleId) {
+      await api('PUT', `/admin/iot/devices/${adminCurrentDeviceId}/alert-rules/${ruleId}`, body);
+    } else {
+      await api('POST', `/admin/iot/devices/${adminCurrentDeviceId}/alert-rules`, body);
+    }
+    closeModal('modal-iot-alert-rule');
+    await openIotDeviceDetail(adminCurrentDeviceId);
+    toast('Alert rule saved');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function deleteIotAlertRule(ruleId) {
+  if (!confirm('Delete this alert rule?')) return;
+  try {
+    await api('DELETE', `/admin/iot/devices/${adminCurrentDeviceId}/alert-rules/${ruleId}`);
+    await openIotDeviceDetail(adminCurrentDeviceId);
+    toast('Alert rule deleted');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function viewIotReadings(deviceId) {
+  try {
+    const readings = await api('GET', `/admin/iot/devices/${deviceId}/readings?limit=200`);
+    if (!readings.length) return toast('No readings found for this device');
+
+    // Build a simple table view in the detail panel
+    const html = `
+      <div class="section-label" style="margin-bottom:8px">Reading History (last ${readings.length})</div>
+      <div class="card" style="padding:0;overflow:hidden;max-height:400px;overflow-y:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:12px">
+          <thead><tr>
+            <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--mist)">Metric</th>
+            <th style="padding:6px 10px;text-align:right;border-bottom:2px solid var(--mist)">Value</th>
+            <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--mist)">Unit</th>
+            <th style="padding:6px 10px;text-align:left;border-bottom:2px solid var(--mist)">Recorded</th>
+          </tr></thead>
+          <tbody>${readings.map(r => `<tr>
+            <td style="padding:6px 10px;border-bottom:1px solid var(--mist)">${escHtml(r.metric_name)}</td>
+            <td style="padding:6px 10px;text-align:right;border-bottom:1px solid var(--mist)">${r.value}</td>
+            <td style="padding:6px 10px;border-bottom:1px solid var(--mist)">${escHtml(r.unit)}</td>
+            <td style="padding:6px 10px;border-bottom:1px solid var(--mist)">${r.recorded_at}</td>
+          </tr>`).join('')}</tbody>
+        </table>
+      </div>
+    `;
+    document.getElementById('iot-panel-body').innerHTML += html;
+  } catch (e) { toast(e.message, 'error'); }
+}
+
 </script>
 
 </body>
